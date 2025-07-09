@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+inc = [cwd]
+
+print(cwd)
+
+group = DefineGroup('GUI', src, depend = [''], CPPPATH = inc)
+
+Return('group')

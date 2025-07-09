@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+# 添加TensorFlow Lite Micro相关的包含路径
+CPPPATH += [cwd + '/../../packages/TensorflowLiteMicro-latest']
+CPPPATH += [cwd + '/../../packages/TensorflowLiteMicro-latest/tensorflow/lite/micro']
+
+group = DefineGroup('ModelInt', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,9 @@
+ExitOnError 1
+SelectInterface SWD
+Speed 4000
+Device CY8C624ABZI
+R
+Halt
+Loadfile Debug/rtthread.elf
+R
+Qc

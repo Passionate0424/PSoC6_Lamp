@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "armToolchainPath": "",
+            "cwd": "${workspaceFolder}",
+            "device": "CY8C624ABZI",
+            "deviceName": "CY8C624ABZI",
+            "executable": "Debug/rtthread.elf",
+            "interface": "swd",
+            "name": "Debug",
+            "preLaunchTask": "${defaultBuildTask}",
+            "request": "launch",
+            "runToEntryPoint": "main",
+            "serverpath": "d:/RT-ThreadStudio/repo/Extract/Debugger_Support_Packages/SEGGER/J-Link/v7.92/JLinkGDBServerCL",
+            "servertype": "jlink",
+            "targetId": "CY8C624ABZI",
+            "toolchainPrefix": "arm-none-eabi",
+            "type": "cortex-debug"
+        }
+    ]
+}

@@ -1,0 +1,132 @@
+[
+ {
+  "path": "/packages/iot/pahomqtt", 
+  "ver": "latest", 
+  "name": "PAHOMQTT"
+ }, 
+ {
+  "path": "/packages/iot/webclient", 
+  "ver": "v2.2.0", 
+  "name": "WEBCLIENT"
+ }, 
+ {
+  "path": "/packages/iot/WiFi/rw007", 
+  "ver": "v2.1.0", 
+  "name": "RW007"
+ }, 
+ {
+  "path": "/packages/iot/netutils", 
+  "ver": "latest", 
+  "name": "NETUTILS"
+ }, 
+ {
+  "path": "/packages/iot/protobuf-c", 
+  "ver": "latest", 
+  "name": "PROTOBUF_C"
+ }, 
+ {
+  "path": "/packages/iot/smtp_client", 
+  "ver": "latest", 
+  "name": "SMTP_CLIENT"
+ }, 
+ {
+  "path": "/packages/security/mbedtls", 
+  "ver": "v2.28.1", 
+  "name": "MBEDTLS"
+ }, 
+ {
+  "path": "/packages/language/JSON/cJSON", 
+  "ver": "v1.7.17", 
+  "name": "CJSON"
+ }, 
+ {
+  "path": "/packages/multimedia/LVGL/LVGL", 
+  "ver": "v8.3.10", 
+  "name": "LVGL"
+ }, 
+ {
+  "path": "/packages/multimedia/LVGL/lv_music_demo", 
+  "ver": "v0.3.4", 
+  "name": "LV_MUSIC_DEMO"
+ }, 
+ {
+  "path": "/packages/system/enhanced-kservice/rt_vsnprintf_full", 
+  "ver": "latest", 
+  "name": "RT_VSNPRINTF_FULL"
+ }, 
+ {
+  "path": "/packages/system/CMSIS/CMSIS-NN", 
+  "ver": "latest", 
+  "name": "CMSIS_NN"
+ }, 
+ {
+  "path": "/packages/system/perf_counter", 
+  "ver": "v2.2.4.1", 
+  "name": "PERF_COUNTER"
+ }, 
+ {
+  "path": "/packages/peripherals/sensors/bh1750", 
+  "ver": "latest", 
+  "name": "BH1750"
+ }, 
+ {
+  "path": "/packages/peripherals/touch/gt911", 
+  "ver": "latest", 
+  "name": "GT911"
+ }, 
+ {
+  "path": "/packages/peripherals/i2c-tools", 
+  "ver": "latest", 
+  "name": "I2C_TOOLS"
+ }, 
+ {
+  "path": "/packages/peripherals/Servo_sg90", 
+  "ver": "v1.0.0", 
+  "name": "SERVO_SG90"
+ }, 
+ {
+  "path": "/packages/ai/nnom", 
+  "ver": "v0.4.3", 
+  "name": "NNOM"
+ }, 
+ {
+  "path": "/packages/ai/onnx-backend", 
+  "ver": "latest", 
+  "name": "ONNX_BACKEND"
+ }, 
+ {
+  "path": "/packages/ai/onnx-parser", 
+  "ver": "latest", 
+  "name": "ONNX_PARSER"
+ }, 
+ {
+  "path": "/packages/ai/llmchat", 
+  "ver": "latest", 
+  "name": "LLMCHAT"
+ }, 
+ {
+  "path": "/packages/arduino/RTduino", 
+  "ver": "latest", 
+  "name": "RTDUINO"
+ }, 
+ {
+  "path": "/packages/arduino/sensors/Adafruit-Sensor", 
+  "ver": "latest", 
+  "name": "ARDUINO_ADAFRUIT_SENSOR"
+ }, 
+ {
+  "path": "/packages/arduino/sensors/Adafruit-BMP280", 
+  "ver": "latest", 
+  "name": "ARDUINO_ADAFRUIT_BMP280"
+ }, 
+ {
+  "path": "/packages/arduino/sensors/Adafruit-SHT31", 
+  "ver": "latest", 
+  "name": "ARDUINO_ADAFRUIT_SHT31"
+ }, 
+ {
+  "path": "/packages/arduino/signalio/Adafruit-BusIO", 
+  "ver": "latest", 
+  "name": "ARDUINO_ADAFRUIT_BUSIO"
+ }
+]

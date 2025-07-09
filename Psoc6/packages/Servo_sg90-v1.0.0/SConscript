@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = ["sg90.c"]
+
+CPPPATH = [cwd]
+
+if GetDepend("PKG_USING_SG90_DEMO"):
+    src +=["sg90Demo.c"]
+
+
+group = DefineGroup('SG90', src, depend = ['PKG_USING_SG90'], CPPPATH = CPPPATH)
+
+Return('group')
