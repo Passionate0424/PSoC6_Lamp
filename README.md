@@ -85,7 +85,7 @@
 # 第二部分 系统组成及功能说明
 
 ## 2.1整体介绍
-
+![整体介绍](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/%E6%95%B4%E4%BD%93%E4%BB%8B%E7%BB%8D.png)
 台灯主控采用英飞凌PSoC6，搭载RT-Thread操作系统，用于驱动多种传感器外设、运行LSTM、FCNN神经网络算法、调用Deepseek语言大模型、使用LVGL用户交互界面，实现环境评估、工作评估等核心功能。同时使用算能SG2002提供算力支持，搭载Maixpy提供的Linux环境进行开发，部署基于YOLOv5和YOLOv8-pose的视觉神经网络，实现对人员工作状态的分析监测。同时利用物联网技术和流媒体技术，实现台灯的远程控制与监控警戒功能的远程查看。
 
 ### 2.1.1 硬件驱动
@@ -118,7 +118,7 @@ SG2002通过GC4653摄像头采集桌面图像，其中一个YOLOv5模型负责�
 
 我们将开源的ThingsPanel物联网平台部署在我们的腾讯云Linux服务器中，PSoC6使用MQTT协议将数据上传给物联网平台，并接收物联网平台下发的指令。实现数据的远程查看与台灯的远程控制。
 
-图2.1.7-1：ThingsPanel物联网平台网页端界面
+![图2.1.7-1：ThingsPanel物联网平台网页端界面](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/ThingsPanel1.png)
 
 ##### 2.1.7.2 SRS流媒体平台
 
@@ -141,11 +141,7 @@ SG2002通过GC4653摄像头采集桌面图像，其中一个YOLOv5模型负责�
 
 台灯底座设计了较大空间用于放置开发板、电源模块等硬件模块，表面开孔用于安装屏幕。顶部延长支架用于安装舵机云台。支撑杆采用两节分段设计，便于打印和组装。整体CAD截图如下所示：
 
-图2.2.2-1：台灯外壳整体CAD设计图
-
-台灯灯头安装于舵机云台上。设计凹槽用于安装LED灯板和视觉模块。灯罩盖板采用可拆卸设计，可以适应不同光强要求，便于更换合适灯罩。灯头也设计了连接件，用于固定灯罩与盖板。CAD设计图如下所示：
-
-图2.2.2-2 灯头结构图
+![图2.2.2-1：台灯外壳整体CAD设计图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.2-1.png)
 
 ### 2.2.3 电路各模块介绍
 
@@ -156,42 +152,42 @@ SG2002通过GC4653摄像头采集桌面图像，其中一个YOLOv5模型负责�
 该部分作为系统的核心控制。
 
 
-图2.2.3-1：PSoC6评估板与RTduino传感器拓展板
+![图2.2.3-1：PSoC6评估板与RTduino传感器拓展板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-1.png)
 
 ##### 2.2.3.2 电源模块
 
 使用DC9V输入，获得稳定的5V、3.3V电源供应。
 
-图2.2.3-2：电源模块
+![图2.2.3-2：电源模块](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-2.png)
 
 ##### 2.2.3.3 PWM调光模块
 
 该模块将输入的PWM波转为对应大小的电压值，用来调整LED亮度。
 
-图2.2.3-3：PWM调光模块
+![图2.2.3-3：PWM调光模块](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-2.png)
 
 ##### 2.2.3.4 I2C传感器拓展板
 
 该部分用于连接BH1750光强传感器和ENS160空气质量传感器，外置测量光强和空气质量。
-图2.2.3-4：I2C传感器拓展板
+![图2.2.3-4：I2C传感器拓展板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-2.png)
 
 ##### 2.2.3.5 R60ABD1毫米波雷达
 
 该模块用于检测人体存在状态、心率、呼吸率。
 
-图2.2.3-5：毫米波雷达模块
+![图2.2.3-5：毫米波雷达模块](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-5.png)
 
 ##### 2.2.3.6 SG2002开发板
 
 SG2002作为YOLO视觉模型的算力支持和语音模块，使用Maixpy提供的Linux环境开发。配备GC4653摄像头进行视觉识别。
 
-图2.2.3-6：SG2002开发板
+![图2.2.3-6：SG2002开发板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-6.png)
 
 ##### 2.2.3.7 拓展板
 
 该部分拼插于RTduino拓展板之上，用于稳定PSoC6开发板与各模块之间的连接。
 
-图2.2.3-7：拓展板
+![图2.2.3-7：拓展板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-7.png)
 
 ## 2.3软件系统介绍
 
@@ -217,26 +213,28 @@ SG2002上的软件程序主要包括以下几个模块：手部识别模块、�
 
 本模块的控制流程图如下图所示：
 
-图2.3.2-1：神经网络模块流程图
+![图2.3.2-1：神经网络模块流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-1.png)
 
 使用TensorFlow框架进行搭建与训练。使用RT-Thread的nnom库软件包进行int8量化部署。所使用的模型结构如下图所示：
 
-图2.3.2-2：模型结构图，左一环境舒适度分类模型，中间压力预测模型，右一温湿度预测模型
+![图2.3.2-2-1：环境舒适度分类模型](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-2.1.png)
+![图2.3.2-2-2：压力预测模型](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-2.2.png)
+![图2.3.2-2-3：温湿度预测模型](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-2.3.png)
 
 部署后使用nnom库提供的性能测试函数进行推理测试得到，环境评分FCNN模型推理时间约891微秒，压力预测FCNN模型推理时间约312微秒，温湿度预测LSTM模型推理时间约1776微秒，测试结果如下图所示。
 
-图2.3.2-3：环境评分FCNN模型推理测试结果
+![图2.3.2-3：环境评分FCNN模型推理测试结果](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-3.png)
 
 
-图2.3.2-4：压力预测FCNN模型推理测试结果
+![图2.3.2-4：压力预测FCNN模型推理测试结果](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-4.png)
 
-图2.3.2-5：温湿度LSTM模型推理测试结果
+![图2.3.2-5：温湿度LSTM模型推理测试结果](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-5.png)
 
 ###### （3）LED控制模块
 
 本模块的控制流程图如下图所示：
 
-图2.3.2-6：LED控制算法流程图
+![图2.3.2-6：LED控制算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-6.png)
 
 LED 控制模块具备自动与手动两种调控模式，为照明提供灵活且智能的解决方案。手动模式下，模块根据屏幕亮度调节滑动条的数值，转化为对应占空比的 PWM 波以改变 LED 亮度，满足用户个性化需求；自动模式则基于BH1750光传感器采集的外界亮度信息，结合伽马调节函数输出 PWM 波实现自动调光，该函数突破简单的反比互补关系，适合人眼的非线性感知，兼顾环境适配与健康保护。同时使用一阶滤波使亮度改变平滑，防止跳变。
 
@@ -244,42 +242,43 @@ LED 控制模块具备自动与手动两种调控模式，为照明提供灵活�
 
 较暗时适当调小亮度以达到护眼效果。
 
-图2.3.2-7：LED控制算法流程图
+![图2.3.2-7：LED控制算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-6.png)
 
 ###### （4）工作状态监测与评估模块
 
-图2.3.2-8：工作状态监测算法整体流程图
+![图2.3.2-8：工作状态监测算法整体流程图]
+(https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-6.png)
 
 模块整体流程图如上图所示，这个模块为“工作监测模式”核心模块。启动“工作监测模式”后，不断接收来自SG2002的工作状态判断结果，作为输入。通过统计工作、使用手机、静息状态（除之前两者之外状态）的持续时间，对当前精力值、工作专注度、工作状态进行评估，同时根据用户设置的工作定时、休息定时、喝水提醒定时，按时对用户进行语音提醒。
 
 工作状态评分函数以工作及玩手机状态统计时间为输入，如果当前时间处于用户设置的工作时间段，获取玩手机时间增长值，触发每分钟扣十分的负向评分。同时若当前精力值过低时，也会根据工作持续时间进行扣分，提醒用户不要过分疲劳工作。流程图如下所示
 
 
-图2.3.2-9：工作状态评分算法流程图
+![图2.3.2-9：工作状态评分算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-6.png)
 
 精力值计算函数依据工作、玩手机摸鱼、静息三种状态，分别获取对应时间增长值；同时，系数计算函数会根据当前环境评分与压力状态，测算精力值计算系数，实现当前环境舒适度越差、人体压力越高，工作导致的精力值下降越快，玩手机和静息状态导致的精力值恢复越慢。流程图如下所示
 
-图2.3.2-10：精力值计算算法流程图
+![图2.3.2-10：精力值计算算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-10.png)
 
 工作专注度评分函数以工作及玩手机状态统计时间为输入，如果当前时间处于用户设置的工作时间段，获取玩手机时间的占比，玩手机时间占比越高，专注度计算结果越低。流程图如下所示
 
-图2.3.2-11：专注度计算算法流程图
+![图2.3.2-11：专注度计算算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-11.png)
 
 喝水提醒模块用定时器进行构建。根据用户设置的喝水提醒时间间隔，设置定时器，回调函数内触发语音提醒；同时，当用户喝水状态发生时执行重置定时器操作，让喝水提醒定时器重新启动计时，以此动态地循环提醒用户喝水，助力用户养成规律饮水习惯。流程图如下所示。
 
-图2.3.2-12：喝水提醒算法流程图
+![图2.3.2-12：喝水提醒算法流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-12.png)
 
 ###### （5） 邮件发送模块
 
 警戒监控模式开启，当摄像头或毫米波雷达监测到有人体出现时，系统会使用SMTP协议向用户发送邮件进行提醒，用户可点击邮件中的链接查看实时监控。
 
-图2.3.2-13：邮件发送模块流程图
+![图2.3.2-13：邮件发送模块流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-12.png)
 
 ###### （6） 舵机控制模块
 
 该模块读取SG2002上报的目标坐标，经卡尔曼滤波后，计算相对于屏幕中心的误差值，输入PID控制线程对SG90舵机进行控制，实现对手部或书本的追踪。
 
-图2.3.2-14：舵机控制模块流程图
+![图2.3.2-14：舵机控制模块流程图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-12.png)
 
 ###### （7）屏幕图形操作界面模块
 
@@ -290,7 +289,7 @@ LED 控制模块具备自动与手动两种调控模式，为照明提供灵活�
 SG2002主要用于部署YOLO视觉模型，受PSoC6串口发送的指令控制，该部分的算法较为简单，在此仅简单展示。
 
 
-图2.3.2-15：SG2002模块整体框架图
+![图2.3.2-15：SG2002模块整体框架图](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.3.2-12.png)
 
 ###### （1） 手部识别模块
 
@@ -316,7 +315,7 @@ PSoC6开发板和RTduino拓展板置于台灯底座空间中，摄像头与LED�
 
 整个系统的正面侧面背面如下图所示：
 
-图3.2.1-1：台灯整体正面
+![图3.2.1-1：台灯整体正面](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/3.2.1-1.png)
 
 图3.2.1-2：台灯整体侧面
 
