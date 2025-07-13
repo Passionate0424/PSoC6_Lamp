@@ -164,12 +164,12 @@ SG2002通过GC4653摄像头采集桌面图像，其中一个YOLOv5模型负责�
 
 该模块将输入的PWM波转为对应大小的电压值，用来调整LED亮度。
 
-![图2.2.3-3：PWM调光模块](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-2.png)
+![图2.2.3-3：PWM调光模块](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-3.png)
 
 ##### 2.2.3.4 I2C传感器拓展板
 
 该部分用于连接BH1750光强传感器和ENS160空气质量传感器，外置测量光强和空气质量。
-![图2.2.3-4：I2C传感器拓展板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-2.png)
+![图2.2.3-4：I2C传感器拓展板](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/2.2.3-4.png)
 
 ##### 2.2.3.5 R60ABD1毫米波雷达
 
