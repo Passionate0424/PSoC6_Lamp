@@ -317,13 +317,13 @@ PSoC6开发板和RTduino拓展板置于台灯底座空间中，摄像头与LED�
 
 ![图3.2.1-1：台灯整体正面](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/3.2.1-1.png)
 
-图3.2.1-2：台灯整体侧面
+![图3.2.1-2：台灯整体侧面](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/3.2.1-2.png)
 
-图3.2.1-3：台灯整体背面
+![图3.2.1-3：台灯整体背面](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/3.2.1-2.png)
 
 ### 3.2.2 软件成果
 
-图3.2.2-1 LVGL界面效果（传感器数据暂时用---替代）
+![图3.2.2-1 LVGL界面效果（传感器数据暂时用---替代）](https://github.com/Passionate0424/PSoC6_Lamp/blob/main/pictures/3.2.1-2.png)
 
 ## 3.2.3 特性成果:
 
