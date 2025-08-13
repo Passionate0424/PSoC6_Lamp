@@ -140,6 +140,10 @@ typedef struct
 	lv_obj_t *monitor_breath_chart;
 	lv_obj_t *monitor_breath_series;
 	lv_obj_t *monitor_win_breath_item0;
+	lv_obj_t *settings_btn_up;
+	lv_obj_t *settings_btn_down;
+	lv_obj_t *settings_btn_left;
+	lv_obj_t *settings_btn_right;
 	lv_obj_t *monitor_win_temperature;
 	lv_obj_t *monitor_temperature_chart;
 	lv_obj_t *monitor_temperature_series;
@@ -161,6 +165,18 @@ typedef struct
 	lv_obj_t *settings_ddlist_switch;
 	lv_obj_t *settings_label_4;
 	lv_obj_t *settings_ddlist_1;
+	lv_obj_t *settings_btn_2;
+	lv_obj_t *settings_btn_2_label;
+	lv_obj_t *wifi_connect;
+	bool wifi_connect_del;
+	lv_obj_t *wifi_connect_cont_1;
+	lv_obj_t *wifi_connect_btn_1;
+	lv_obj_t *wifi_connect_btn_1_label;
+	// WiFi list components
+	lv_obj_t *wifi_connect_list;
+	lv_obj_t *wifi_connect_title_label;
+	lv_obj_t *wifi_connect_refresh_btn;
+	lv_obj_t *wifi_connect_refresh_btn_label;
 	lv_obj_t *guader;
 	bool guader_del;
 	lv_obj_t *guader_cont_1;
@@ -204,6 +220,7 @@ extern lv_ui guider_ui;
 
 void setup_scr_home(lv_ui *ui);
 void setup_scr_monitor(lv_ui *ui);
+void setup_scr_wifi_connect(lv_ui *ui);
 void setup_scr_settings(lv_ui *ui);
 void setup_scr_guader(lv_ui *ui);
 void setup_scr_font(lv_ui *ui);

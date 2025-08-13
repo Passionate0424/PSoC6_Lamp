@@ -407,6 +407,7 @@ time_t ntp_sync_to_rtc(const char *host_name)
         static beijing_time_t my_time;
         if (cur_time > 0)
         {
+
             // 不要手动加8小时，直接转换
             localtime_r(&cur_time, &beijing_tm);
             my_time.year = beijing_tm.tm_year + 1900;
@@ -415,9 +416,9 @@ time_t ntp_sync_to_rtc(const char *host_name)
             my_time.hour = beijing_tm.tm_hour;
             my_time.min = beijing_tm.tm_min;
             my_time.sec = beijing_tm.tm_sec;
-            rt_kprintf("Beijing time: %04d-%02d-%02d %02d:%02d:%02d\n",
-                       my_time.year, my_time.month, my_time.day,
-                       my_time.hour, my_time.min, my_time.sec);
+//            rt_kprintf("Beijing time: %04d-%02d-%02d %02d:%02d:%02d\n",
+//                       my_time.year, my_time.month, my_time.day,
+//                       my_time.hour, my_time.min, my_time.sec);
 
             // 设置数字时钟的时间
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);

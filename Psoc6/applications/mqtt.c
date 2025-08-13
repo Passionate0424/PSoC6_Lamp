@@ -148,6 +148,7 @@ static void mqtt_control_callback(MQTTClient *c, MessageData *msg_data)
             if(guard_status == 1)
             {
                 uart_send_protocol("c", 16); // 发送控制字c:16关闭推流
+                rt_thread_mdelay(1000); // 延时100ms
                 uart_send_protocol("c", 1); // 发送控制字c:11 继续守卫模式
             }
             LOG_I("RTMP stream turned off");
@@ -158,7 +159,7 @@ static void mqtt_control_callback(MQTTClient *c, MessageData *msg_data)
             if(guard_status == 1)
             {
                 uart_send_protocol("c", 11); // 发送控制字c:11 暂停守卫模式
-                rt_thread_mdelay(10000); // 延时100ms
+                rt_thread_mdelay(1000); // 延时100ms
                 uart_send_protocol("c", 6); // 发送控制字c:16开启推流
             }
         }
@@ -385,7 +386,7 @@ static int mqtt_upload_start(int argc, char **argv)
     }
     // 初始化信号量，初始值为0
     rt_sem_init(&mqtt_upload_sem, "mqtt_up", 0, RT_IPC_FLAG_FIFO);
-    mqtt_upload_thread = rt_thread_create("mqtt_upload", mqtt_upload_entry, RT_NULL, 2048, 20, 10);
+    mqtt_upload_thread = rt_thread_create("mqtt_upload", mqtt_upload_entry, RT_NULL, 1520, 20, 10);
     if (mqtt_upload_thread == RT_NULL)
     {
         LOG_E("Failed to create MQTT upload thread.");

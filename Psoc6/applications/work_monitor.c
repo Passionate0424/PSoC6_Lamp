@@ -6,7 +6,7 @@
 // 2. switch_mode_by_uart：通过串口命令切换模式
 // 3. switch_mode_by_key：通过按键切换模式
 //
-// 作者：xxx
+// 作者：Passionate
 // 日期：2025-07-06
 
 // 检测模式评价算法
@@ -14,9 +14,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "work_monitor.h"   // 包含工作监测相关头文件
-#include "nnom_lstm_demo.h" // 包含NNOM LSTM模型相关头文件
-#include "gui_guider.h"     // 包含GUI相关头文件
+#include "work_monitor.h" // 包含工作监测相关头文件
+#include "nnom_ai.h"      // 包含NNOM LSTM模型相关头文件
+#include "gui_guider.h"   // 包含GUI相关头文件
 
 #define MODE_DEMO 0
 #define MODE_REAL 1
@@ -45,8 +45,8 @@ static void monitor_calc_carefulness_entry(void *parameter)
 {
     static int temp_work_duration = 0;  // 上次计算时的工作持续时间
     static int temp_phone_duration = 0; // 上次计算时的玩手机持续时间
-    static time_t temp_sum_time = NULL;       // 上次计算时的总时间
-    temp_sum_time = time(RT_NULL); // 初始化临时总时间
+    static time_t temp_sum_time = NULL; // 上次计算时的总时间
+    temp_sum_time = time(RT_NULL);      // 初始化临时总时间
     while (1)
     {
         int work_delta, phone_delta, sum_delta;
@@ -57,25 +57,27 @@ static void monitor_calc_carefulness_entry(void *parameter)
         time_t now_time = time(RT_NULL);
         sum_delta = now_time - temp_sum_time;
         // 计算专注度
-        rt_kprintf("工作持续时间: %.1f, 玩手机持续时间: %.1f, 总时间: %.1f\n",
-                 monitor_data.work_duration, monitor_data.phone_duration, monitor_data.sum_time);
+        // rt_kprintf("工作持续时间: %.1f, 玩手机持续时间: %.1f, 总时间: %.1f\n",monitor_data.work_duration, monitor_data.phone_duration, monitor_data.sum_time);
         if (monitor_data.is_working && phone_delta > 0 && sum_delta > 0)
         {
             float phone_ratio = (float)phone_delta / sum_delta;
-            rt_kprintf("======================================工作持续时间: %.1f, 玩手机持续时间: %.1f, 总时间: %.1f, 玩手机占比: %.2f\n",
-                     monitor_data.work_duration, monitor_data.phone_duration, monitor_data.sum_time, phone_ratio);
-            carefulness -= phone_ratio * 0.1 * (150 - energy); // 玩手机时间占比越高，专注度下降越快
+            // rt_kprintf("======================================工作持续时间: %.1f, 玩手机持续时间: %.1f, 总时间: %.1f, 玩手机占比: %.2f\n",
+            //    monitor_data.work_duration, monitor_data.phone_duration, monitor_data.sum_time, phone_ratio);
+            carefulness -= phone_ratio * 0.1 * (150 - energy); // 玩手机时间占比越高，专注度下降越快，能量值越低下降越快
             if (carefulness < 0)
                 carefulness = 0;
         }
         temp_work_duration = monitor_data.work_duration;   // 更新临时工作持续时间
         temp_phone_duration = monitor_data.phone_duration; // 更新临时玩手机持续时间
-        temp_sum_time = now_time ;             // 更新临时总时间
+        temp_sum_time = now_time;                          // 更新临时总时间
         rt_kprintf("专注度更新: %.1f,", carefulness);
         rt_mutex_release(monitor_mutex);
         // 更新专注度显示
         rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
         lv_label_set_text_fmt(guider_ui.monitor_label_carefulness, "%.1f", carefulness);
+        // 更新能量条
+        lv_bar_set_value(guider_ui.monitor_bar_carefulness, (int)carefulness, LV_ANIM_OFF);
+        lv_event_send(guider_ui.monitor_bar_carefulness, LV_EVENT_VALUE_CHANGED, NULL);
         rt_mutex_release(lv_mutex);
         rt_thread_mdelay(1000); // 每秒更新一次专注度
     }
@@ -90,15 +92,15 @@ static void monitor_calc_score_entry(void *parameter)
 {
     static int temp_work_duration = 0;  // 上次计算时的工作持续时间
     static int temp_phone_duration = 0; // 上次计算时的玩手机持续时间
-    static time_t temp_sum_time = NULL;       // 上次计算时的总时间
-    temp_sum_time = time(RT_NULL); // 初始化临时总时间
+    static time_t temp_sum_time = NULL; // 上次计算时的总时间
+    temp_sum_time = time(RT_NULL);      // 初始化临时总时间
     while (1)
     {
         int work_delta, phone_delta, sum_delta;
         rt_mutex_take(monitor_mutex, RT_WAITING_FOREVER);
         work_delta = monitor_data.work_duration - temp_work_duration;
         phone_delta = monitor_data.phone_duration - temp_phone_duration;
-        time_t  now_time = time(RT_NULL);
+        time_t now_time = time(RT_NULL);
         sum_delta = now_time - temp_sum_time;
         if (monitor_data.is_working)
         {
@@ -140,27 +142,46 @@ static void monitor_calc_energy_entry(void *parameter)
 {
     static int temp_work_duration = 0;  // 上次计算时的工作持续时间
     static int temp_phone_duration = 0; // 上次计算时的玩手机持续时间
-    static int temp_sum_time = 0;       // 上次计算时的总时间
+    static time_t temp_sum_time = NULL; // 上次计算时的总时间
+    temp_sum_time = time(RT_NULL);      // 初始化临时总时间
     while (1)
     {
+        // 打印monitor_data.work_duration指针
+        // rt_kprintf("monitor_data.work_duration: %p\n", &monitor_data.work_duration);
         float param = 0.0f;
         if (stress_pre >= 0)
         {
-            param = (10 - stress_pre) * 0.1f + env_pre * 0.1f; // 假设压力值越高，精力恢复越慢
+            param = (10 - stress_pre) * 0.1f + env_pre * 0.01f; // 假设压力值越高，环境评分越低，精力恢复越慢，参数越小
         }
-        int work_delta, phone_delta, sum_delta;
+        if(param == 0)
+            param = 0.01f; // 防止除0错误
+        // rt_kprintf("工作总时间：%d秒，上次工作总时间: %d秒\n", monitor_data.work_duration, temp_work_duration);
+        // 打印参数值
+        rt_kprintf("====================================参数值: %.2f\n", param);
+        float work_delta, phone_delta, sum_delta;
         rt_mutex_take(monitor_mutex, RT_WAITING_FOREVER);
-        work_delta = monitor_data.work_duration - temp_work_duration;
-        phone_delta = monitor_data.phone_duration - temp_phone_duration;
-        sum_delta = monitor_data.sum_time - temp_sum_time;
-        int energy_change = 0;
+        work_delta = (float)(monitor_data.work_duration - temp_work_duration);
+        phone_delta = (float)(monitor_data.phone_duration - temp_phone_duration);
+        time_t now_time = time(RT_NULL);
+        sum_delta = now_time - temp_sum_time;
+        float energy_change = 0;
         if (work_delta > 0)
-            energy_change -= (work_delta / 60) * (20 - param); // 工作每分钟消耗能量
+        {
+            energy_change -= (work_delta / 60.0f) * (50 - param); // 工作每分钟消耗能量
+            rt_kprintf("================消耗能量%.1f\n", (work_delta / 60.0f) * (50 - param));
+        }
         if (phone_delta > 0)
-            energy_change += (phone_delta / 60) * 3 * param; // 玩手机每分钟恢复能量
-        int rest_delta = sum_delta - work_delta - phone_delta;
+        {
+            energy_change += (phone_delta / 60.0f) * 15 * param; // 玩手机每分钟恢复能量
+            rt_kprintf("================玩手机能量变化%.1f\n", (phone_delta / 60.0f) * 15 * param);
+        }
+        float rest_delta = (float)(sum_delta - work_delta - phone_delta);
         if (rest_delta > 0)
-            energy_change += (rest_delta / 60) * 4 * param; // 静息每分钟恢复能量
+        {
+            energy_change += (rest_delta / 60) * 1 * param; // 静息每分钟恢复能量
+            rt_kprintf("rest_delta: %.3f, param: %.3f,静息能量变化%.3f\n", rest_delta, param, (rest_delta / 60) * 1 * param);
+        }
+        rt_kprintf("能量变化: %.2f", energy_change);
         energy += energy_change;
         if (energy < 0)
             energy = 0;
@@ -168,12 +189,15 @@ static void monitor_calc_energy_entry(void *parameter)
             energy = 100;
         temp_work_duration = monitor_data.work_duration;
         temp_phone_duration = monitor_data.phone_duration;
-        temp_sum_time = monitor_data.sum_time;
-        rt_kprintf("能量值更新: %d,", (int)energy);
+        temp_sum_time = now_time;
+        //rt_kprintf("能量值更新: %.1f\n", energy);
         rt_mutex_release(monitor_mutex);
         // 更新能量值显示
         rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
-        lv_label_set_text_fmt(guider_ui.monitor_label_energy, "%d", (int)energy);
+        lv_label_set_text_fmt(guider_ui.monitor_label_energy, "%.1f", energy);
+        // 更新能量条
+        lv_bar_set_value(guider_ui.monitor_bar_energy, (int)energy, LV_ANIM_OFF);
+        lv_event_send(guider_ui.monitor_bar_energy, LV_EVENT_VALUE_CHANGED, NULL);
         rt_mutex_release(lv_mutex);
         rt_thread_mdelay(1000); // 每秒更新一次能量值
     }
@@ -216,11 +240,11 @@ int work_monitor_thread_init(void)
         }
     }
     // 创建能量计算线程
-    energy_thread = rt_thread_create("energy_calc", monitor_calc_energy_entry, RT_NULL, 2048, 20, 10);
+    energy_thread = rt_thread_create("energy_calc", monitor_calc_energy_entry, RT_NULL, 1024, 20, 10);
     // 创建工作分数计算线程
-    work_score_thread = rt_thread_create("work_score_calc", monitor_calc_score_entry, RT_NULL, 2048, 20, 10);
+    work_score_thread = rt_thread_create("work_score_calc", monitor_calc_score_entry, RT_NULL, 1024, 20, 10);
     // 创建专注度计算线程
-    carefulness_thread = rt_thread_create("carefulness_calc", monitor_calc_carefulness_entry, RT_NULL, 2048, 20, 10);
+    carefulness_thread = rt_thread_create("carefulness_calc", monitor_calc_carefulness_entry, RT_NULL, 1024, 20, 10);
     return 1;
 }
 INIT_ENV_EXPORT(work_monitor_thread_init); // 初始化工作监测线程

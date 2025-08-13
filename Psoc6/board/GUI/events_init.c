@@ -28,7 +28,7 @@ extern cyhal_rtc_t rtc_obj;
 #endif
 
 bool btn1_status = false; // false处于关灯状态，true处于开灯状态
-bool guard_status = 0; // 0:未进入guard模式 1:进入guard模式
+bool guard_status = 0;    // 0:未进入guard模式 1:进入guard模式
 
 int bar_energy_value;
 char bar_energy_char[5];
@@ -153,9 +153,16 @@ static void home_btn_guard_event_handler(lv_event_t *e)
         ui_load_scr_animation(&guider_ui, &guider_ui.guader, guider_ui.guader_del, &guider_ui.home_del, setup_scr_guader, LV_SCR_LOAD_ANIM_NONE, 20, 20, true, false);
         // 适配守护模式开关
         guard_status = 1;
-        uart_send_protocol("c", 2); // 发送追踪模式关
-        uart_send_protocol("c", 16); // 发送推流关
-        uart_send_protocol("c", 1); // 发送守护模式开关指令
+        uart_send_protocol("c", 17);        // 发送monitor模式关
+        rt_thread_mdelay(100);              // 等待100ms
+        uart_send_protocol("c", 2);         // 发送追踪模式关
+        gimbal_stop_tracking();             // 停止追踪线程
+        rt_thread_mdelay(100);              // 等待100ms
+        uart_send_protocol("c", 16);        // 发送推流关
+        rt_thread_mdelay(100);              // 等待100ms
+        sg90_set_angle(gimbal.servo_x, 90); // 设置初始角度
+        sg90_set_angle(gimbal.servo_y, 80); // 设置初始角度
+        uart_send_protocol("c", 1);         // 发送守护模式开指令
         break;
     }
     default:
@@ -305,9 +312,17 @@ static void monitor_bar_energy_event_handler(lv_event_t *e)
     case LV_EVENT_VALUE_CHANGED:
     {
         bar_energy_value = lv_bar_get_value(guider_ui.monitor_bar_energy);
-        sprintf(bar_energy_char, "%d%%", bar_energy_value);
-        lv_label_set_text(guider_ui.monitor_label_energy, bar_energy_char);
-
+        // sprintf(bar_energy_char, "%d%%", bar_energy_value);
+        // lv_label_set_text(guider_ui.monitor_label_energy, bar_energy_char);
+        // 动态变色
+        if (bar_energy_value < 30)
+        {
+            lv_obj_set_style_bg_color(guider_ui.monitor_bar_energy, lv_color_hex(0xff0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(guider_ui.monitor_bar_energy, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
         break;
     }
     default:
@@ -323,8 +338,17 @@ static void monitor_bar_carefulness_event_handler(lv_event_t *e)
     case LV_EVENT_VALUE_CHANGED:
     {
         bar_carefulness_value = lv_bar_get_value(guider_ui.monitor_bar_carefulness);
-        sprintf(bar_carefulness_char, "%d%%", bar_carefulness_value);
-        lv_label_set_text(guider_ui.monitor_label_carefulness, bar_carefulness_char);
+        // sprintf(bar_carefulness_char, "%d%%", bar_carefulness_value);
+        // lv_label_set_text(guider_ui.monitor_label_carefulness, bar_carefulness_char);
+        // 动态变色
+        if (bar_carefulness_value < 30)
+        {
+            lv_obj_set_style_bg_color(guider_ui.monitor_bar_carefulness, lv_color_hex(0xff0000), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
+        else
+        {
+            lv_obj_set_style_bg_color(guider_ui.monitor_bar_carefulness, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+        }
         break;
     }
     default:
@@ -337,8 +361,8 @@ static void monitor_bar_carefulness_event_handler(lv_event_t *e)
 static rt_timer_t work_timer = RT_NULL;
 static rt_timer_t rest_timer = RT_NULL;
 rt_timer_t water_timer = RT_NULL;
-static rt_int8_t work_time = 0; // 工作时间
-static rt_int8_t rest_time = 0;
+static float work_time = 0; // 工作时间
+static float rest_time = 0;
 static rt_int8_t loop_count = 0; // 循环次数
 static float water_interval = 0; // 喝水提醒间隔时间
 static rt_int8_t work_count = 0; // 工作次数计数
@@ -374,11 +398,8 @@ static void rest_timer_callback(void *parameter)
     {
         uart_send_protocol("c", 17);     // 发送工作模式结束指令
         rt_sem_release(lv_rest_end_sem); // 休息结束，发送信号通知
-        
     }
 }
-
-
 
 static void water_timer_callback(void *parameter)
 {
@@ -557,20 +578,25 @@ static void monitor_work_btn_event_handler(lv_event_t *e)
                 // 启动工作和喝水定时器
                 rt_timer_start(work_timer);
                 rt_timer_start(water_timer);
+                drink_count = 0; // 初始化喝水计数
+                rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
+                // 更新喝水计数显示
+                lv_label_set_text_fmt(guider_ui.monitor_label_drink, "%d", drink_count);
+                rt_mutex_release(lv_mutex);
 
                 uart_send_protocol("c", 07); // 发送工作模式启动指令
 
                 // 启动工作计算线程
                 monitor_calc_start();
 
-                rt_kprintf("[lvgl]工作定时器启动: %d分钟，休息定时器: %d分钟，喝水提醒: %.1f分钟\n", work_time, rest_time, water_interval);
+                rt_kprintf("[lvgl]工作定时器启动: %.1f分钟，休息定时器: %.1f分钟，喝水提醒: %.1f分钟\n", work_time, rest_time, water_interval);
             }
             else
             {
                 // 演示模式，直接启动工作定时器
-                work_time = 1;        // 1分钟
-                rest_time = 0.5;      // 30秒
-                water_interval = 0.3; // 18秒
+                work_time = 0.6;        // 30s
+                rest_time = 0.16;      // 10秒
+                water_interval = 0.33; // 20秒
 
                 monitor_setting.work_time = work_time; // 工作时间（分钟）
                 monitor_setting.rest_time = rest_time; // 休息时间（分钟）
@@ -603,12 +629,17 @@ static void monitor_work_btn_event_handler(lv_event_t *e)
                     water_timer = RT_NULL; // 重置喝水定时器指针
                 }
 
-                work_timer = rt_timer_create("work", work_timer_callback, RT_NULL, work_time * 60 * RT_TICK_PER_SECOND, RT_TIMER_FLAG_ONE_SHOT);
-                rest_timer = rt_timer_create("rest", rest_timer_callback, RT_NULL, rest_time * 60 * RT_TICK_PER_SECOND, RT_TIMER_FLAG_ONE_SHOT);
+                work_timer = rt_timer_create("work", work_timer_callback, RT_NULL, (int)(work_time * 60 * RT_TICK_PER_SECOND), RT_TIMER_FLAG_ONE_SHOT);
+                rest_timer = rt_timer_create("rest", rest_timer_callback, RT_NULL, (int)(rest_time * 60 * RT_TICK_PER_SECOND), RT_TIMER_FLAG_ONE_SHOT);
                 water_timer = rt_timer_create("water", water_timer_callback, RT_NULL, (int)(water_interval * 60 * RT_TICK_PER_SECOND), RT_TIMER_FLAG_ONE_SHOT);
 
                 rt_timer_start(work_timer);
                 rt_timer_start(water_timer);
+                drink_count = 0; // 初始化喝水计数
+                rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
+                // 更新喝水计数显示
+                lv_label_set_text_fmt(guider_ui.monitor_label_drink, "%d", drink_count);
+                rt_mutex_release(lv_mutex);
 
                 uart_send_protocol("c", 07); // 发送工作模式启动指令
 
@@ -644,6 +675,8 @@ static void monitor_work_btn_event_handler(lv_event_t *e)
             lv_obj_set_style_bg_color(guider_ui.monitor_work_btn, lv_color_hex(0x8c8d8e), LV_PART_MAIN | LV_STATE_DEFAULT);
             lv_label_set_text(guider_ui.monitor_work_btn_label, "START");
             lv_obj_add_flag(guider_ui.monitor_spinner_1, LV_OBJ_FLAG_HIDDEN);
+            monitor_calc_stop();         // 停止工作计算线程
+            uart_send_protocol("c", 17); // 发送工作模式结束指令
             work_btn_status = false;
         }
         break;
@@ -882,23 +915,45 @@ static void settings_ddlist_1_event_handler(lv_event_t *e)
             // 关闭追踪模式
             uart_send_protocol("c", 2); // 发送关闭追踪模式指令
             // 关闭追踪
-            gimbal_stop_tracking(); // 停止追踪
+            gimbal_stop_tracking();             // 停止追踪
+            sg90_set_angle(gimbal.servo_x, 90); // 设置初始角度
+            sg90_set_angle(gimbal.servo_y, 80); // 设置初始角度
             break;
         case 1:
             // 书本追踪模式
             uart_send_protocol("c", 4); // 发送书本追踪模式指令
             // 开启书本追踪
-            gimbal_start_tracking(); // 开始追踪
+            sg90_set_angle(gimbal.servo_x, 90); // 设置初始角度
+            sg90_set_angle(gimbal.servo_y, 80); // 设置初始角度
+            rt_thread_mdelay(500);              // 等待舵机稳定
+            gimbal_start_tracking();            // 开始追踪
             break;
         case 2:
             // 手追踪模式
             uart_send_protocol("c", 3); // 发送手追踪模式指令
             // 开启手追踪
-            gimbal_start_tracking(); // 开始手追踪
+            sg90_set_angle(gimbal.servo_x, 90); // 设置初始角度
+            sg90_set_angle(gimbal.servo_y, 80); // 设置初始角度
+            rt_thread_mdelay(500);              // 等待舵机稳定
+            gimbal_start_tracking();            // 开始手追踪
             break;
         }
         break;
     }
+    }
+}
+
+static void settings_btn_2_event_handler (lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    switch (code) {
+    case LV_EVENT_CLICKED:
+    {
+        ui_load_scr_animation(&guider_ui, &guider_ui.wifi_connect, guider_ui.wifi_connect_del, &guider_ui.settings_del, setup_scr_wifi_connect, LV_SCR_LOAD_ANIM_NONE, 20, 20, true, false);
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -907,6 +962,26 @@ void events_init_settings(lv_ui *ui)
     lv_obj_add_event_cb(ui->settings_btn_1, settings_btn_1_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->settings_ddlist_switch, settings_ddlist_switch_event_handler, LV_EVENT_ALL, ui);
     lv_obj_add_event_cb(ui->settings_ddlist_1, settings_ddlist_1_event_handler, LV_EVENT_ALL, ui);
+    lv_obj_add_event_cb(ui->settings_btn_2, settings_btn_2_event_handler, LV_EVENT_ALL, ui);
+}
+
+static void wifi_connect_btn_1_event_handler (lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    switch (code) {
+    case LV_EVENT_CLICKED:
+    {
+        ui_load_scr_animation(&guider_ui, &guider_ui.settings, guider_ui.settings_del, &guider_ui.wifi_connect_del, setup_scr_settings, LV_SCR_LOAD_ANIM_NONE, 20, 20, true, false);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void events_init_wifi_connect (lv_ui *ui)
+{
+    lv_obj_add_event_cb(ui->wifi_connect_btn_1, wifi_connect_btn_1_event_handler, LV_EVENT_ALL, ui);
 }
 
 static void guader_btn_1_event_handler(lv_event_t *e)
@@ -916,9 +991,11 @@ static void guader_btn_1_event_handler(lv_event_t *e)
     {
     case LV_EVENT_CLICKED:
     {
+
         ui_load_scr_animation(&guider_ui, &guider_ui.home, guider_ui.home_del, &guider_ui.guader_del, setup_scr_home, LV_SCR_LOAD_ANIM_NONE, 20, 20, true, false);
         guard_status = 0;
         uart_send_protocol("c", 16); // 发送推流关
+        rt_thread_mdelay(100);       // 等待100ms
         uart_send_protocol("c", 11); // 发送守护模式关闭指令
         int id = lv_dropdown_get_selected(guider_ui.settings_ddlist_1);
         switch (id)
@@ -928,9 +1005,11 @@ static void guader_btn_1_event_handler(lv_event_t *e)
             break;
         case 1:
             uart_send_protocol("c", 4);
+            gimbal_start_tracking(); // 开启书本追踪
             break;
         case 2:
             uart_send_protocol("c", 3);
+            gimbal_start_tracking(); // 开启手追踪
             break;
         default:
             break;

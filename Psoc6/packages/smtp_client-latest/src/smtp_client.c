@@ -13,14 +13,18 @@
     Date:       2019-10-28
     Author:     WKJay
     Modify:     增加多个收件人功能
-    
+
  3. Version:    V1.0.2
     Date:       2020-06-22
     Author:     WKJay
     Modify:     增加附件功能
+ 4. Version:    V1.0.3
+    Date:       2025-07-10
+    Author:     Passionate0424
+    Modify:     支持发送HTML格式邮件，支持设置字体颜色等属性
 *************************************************/
 
-//修改了smtp_quit避免报错
+// 修改了smtp_quit避免报错
 
 #include <stdint.h>
 #include <string.h>
@@ -35,10 +39,15 @@
 smtp_session_t smtp_session;
 
 #ifdef SMTP_CLIENT_USING_ATTACHMENT
+// 全局静态缓冲区，减少线程栈消耗
+static uint8_t g_attachment_buf[SMTP_SEND_DATA_MAX_LEN];
+static char g_base64_buf[SMTP_SEND_DATA_MAX_LEN * 2]; // base64编码后缓冲区
+#endif
+
 /**
  * Name:    smtp_add_attachment
  * Brief:   添加附件
- * Input:   
+ * Input:
  *  @file_path: 文件路径
  *  @file_name: 文件名
  * Output:  成功:0 , 失败:-1
@@ -105,7 +114,7 @@ int smtp_add_attachment(char *file_path, char *file_name)
     return 0;
 }
 
-//清除所有附件
+// 清除所有附件
 void smtp_clear_attachments(void)
 {
     smtp_attachments_t *cur_attr, *next_attr;
@@ -117,7 +126,6 @@ void smtp_clear_attachments(void)
     }
     smtp_session.attachments = NULL;
 }
-#endif
 
 /**
  * Name:    smtp_client_init
@@ -161,11 +169,11 @@ static int smtp_close_connection(void)
  *          地址最大长度由 SMTP_MAX_ADDR_LEN 定义
  * Input:
  *  @server_addr: 服务器地址
- *  @addr_type:   地址类型  
+ *  @addr_type:   地址类型
  *                ADDR_TYPE_DOMAIN  域名类型
  *                ADDR_TYPE_IP      IP地址类型
  *  @port:        服务器端口
- * Output:        0:设置成功，-1,：设置失败  
+ * Output:        0:设置成功，-1,：设置失败
  */
 int smtp_set_server_addr(const char *server_addr, uint8_t addr_type, const char *port)
 {
@@ -240,7 +248,7 @@ int smtp_set_auth(const char *username, const char *password)
         return -1;
     }
 
-    //设置SMTP MAIL FROM属性，该属性必须与用户名一致
+    // 设置SMTP MAIL FROM属性，该属性必须与用户名一致
     if (username_len > SMTP_MAX_ADDR_LEN)
     {
         LOG_E("sender address id too long");
@@ -526,7 +534,7 @@ static int smtp_connect_server(void)
 /**
  * Name:    smtp_send_data_with_response_check
  * Brief:   smtp数据发送并校验响应
- * Input:   
+ * Input:
  *  @buf:   待发送的数据
  *  @response_code: 正确响应码
  * Output:  成功0，失败-1
@@ -594,7 +602,7 @@ static int smtp_handshake(void)
     }
 
 #ifdef SMTP_CLIENT_USING_TLS
-    //STARTTLS
+    // STARTTLS
     if (atoi(smtp_session.server_port) == 587)
     {
         smtp_session.state = SMTP_START_TLS;
@@ -646,7 +654,7 @@ static int smtp_auth_login(void)
         smtp_session.state = SMTP_AUTH_LOGIN;
     }
 #endif
-    //发送用户名信息
+    // 发送用户名信息
     sprintf(auth_info_buf, "%s\r\n", smtp_session.username);
     if (smtp_send_data_with_response_check(auth_info_buf, "334") != 0)
     {
@@ -654,7 +662,7 @@ static int smtp_auth_login(void)
         smtp_close_connection();
         return -1;
     }
-    //发送密码信息
+    // 发送密码信息
     sprintf(auth_info_buf, "%s\r\n", smtp_session.password);
     if (smtp_send_data_with_response_check(auth_info_buf, "235") != 0)
     {
@@ -675,7 +683,7 @@ static int smtp_set_sender_receiver(void)
 {
     uint16_t mail_buf_len = SMTP_MAX_ADDR_LEN + strlen(SMTP_CMD_MAIL_HEAD) + strlen(SMTP_CMD_MAIL_END);
     uint16_t rcpt_buf_len = SMTP_MAX_ADDR_LEN + strlen(SMTP_CMD_RCPT_HEAD) + strlen(SMTP_CMD_RCPT_END);
-    //使用较大的长度
+    // 使用较大的长度
     uint16_t buf_len = (mail_buf_len > rcpt_buf_len) ? mail_buf_len : rcpt_buf_len;
     smtp_address_to_t *smtp_address_to_temp = smtp_session.address_to;
 
@@ -715,11 +723,10 @@ static int smtp_set_sender_receiver(void)
 static void smtp_send_attachment(void)
 {
     uint16_t attachments_cnt = 0;
-    uint8_t attachment_buf[SMTP_SEND_DATA_MAX_LEN];
     smtp_attachments_t *cur_attr = smtp_session.attachments;
     while (cur_attr)
     {
-        FILE *fp = fopen(cur_attr->file_path, "r");
+        FILE *fp = fopen(cur_attr->file_path, "rb");
         if (fp)
         {
             uint32_t read_size = 0;
@@ -731,26 +738,33 @@ static void smtp_send_attachment(void)
             {
                 break;
             }
-            //发送附件头
-            rt_memset(attachment_buf, 0, sizeof(attachment_buf));
-            sprintf((char *)attachment_buf,
-                    "--" SMTP_MAIL_BOUNDARY "\r\n"
-                    "Content-Type: text/plain; name=\"%s\"\r\n"
-                    "Content-Transfer-Encoding: binary\r\n"
-                    "Content-Disposition: attachment; filename=\"%s\"\r\n\r\n",
-                    cur_attr->file_name, cur_attr->file_name);
-            smtp_write(attachment_buf, strlen((char *)attachment_buf));
+            // 发送附件头，图片用image/jpeg，base64编码
+            rt_memset(g_attachment_buf, 0, sizeof(g_attachment_buf));
+            snprintf((char *)g_attachment_buf, sizeof(g_attachment_buf),
+                     "--" SMTP_MAIL_BOUNDARY "\r\n"
+                     "Content-Type: image/jpeg; name=\"%s\"\r\n"
+                     "Content-Transfer-Encoding: base64\r\n"
+                     "Content-Disposition: attachment; filename=\"%s\"\r\n\r\n",
+                     cur_attr->file_name, cur_attr->file_name);
+            smtp_write(g_attachment_buf, strlen((char *)g_attachment_buf));
 
-            //发送附件数据
-            rt_memset(attachment_buf, 0, sizeof(attachment_buf));
-            read_size = fread(attachment_buf, 1, sizeof(attachment_buf), fp);
-            while (read_size == sizeof(attachment_buf))
+            // 分块读取图片并base64编码发送
+            while ((read_size = fread(g_attachment_buf, 1, sizeof(g_attachment_buf), fp)) > 0)
             {
-                smtp_write(attachment_buf, read_size);
-                read_size = fread(attachment_buf, 1, sizeof(attachment_buf), fp);
-                rt_thread_mdelay(1);
+                uint32_t b64_len = smtp_base64_encode(g_base64_buf, sizeof(g_base64_buf), (const char *)g_attachment_buf, read_size);
+                if (b64_len > 0)
+                {
+                    // base64每76字符换行，兼容性更好
+                    uint32_t i = 0;
+                    while (i < b64_len)
+                    {
+                        uint32_t line_len = (b64_len - i > 76) ? 76 : (b64_len - i);
+                        smtp_write((uint8_t *)&g_base64_buf[i], line_len);
+                        smtp_write((uint8_t *)"\r\n", 2);
+                        i += line_len;
+                    }
+                }
             }
-            smtp_write(attachment_buf, read_size);
             smtp_write((uint8_t *)"\r\n\r\n", strlen("\r\n\r\n"));
             fclose(fp);
         }
@@ -760,11 +774,9 @@ static void smtp_send_attachment(void)
         }
         cur_attr = cur_attr->next;
     }
-
     if (attachments_cnt > 0)
         smtp_write((uint8_t *)("--" SMTP_MAIL_BOUNDARY "--\r\n"), strlen("--" SMTP_MAIL_BOUNDARY "--\r\n"));
 }
-
 #endif
 
 /**
@@ -775,7 +787,9 @@ static void smtp_send_attachment(void)
  */
 static int smtp_send_content(void)
 {
-    char content_buf[SMTP_SEND_DATA_HEAD_MAX_LENGTH + SMTP_SEND_DATA_MAX_LEN];
+    // 全局静态缓冲区，减少线程栈消耗
+    static char g_content_buf[SMTP_SEND_DATA_HEAD_MAX_LENGTH + SMTP_SEND_DATA_MAX_LEN];
+    char *content_buf = g_content_buf;
     memset(content_buf, 0, SMTP_SEND_DATA_HEAD_MAX_LENGTH + SMTP_SEND_DATA_MAX_LEN);
 
     if (smtp_send_data_with_response_check(SMTP_CMD_DATA, "354") != 0)
@@ -784,44 +798,41 @@ static int smtp_send_content(void)
         smtp_close_connection();
         return -1;
     }
-    //拼接内容
-
+    // 拼接内容
 #ifdef SMTP_CLIENT_USING_ATTACHMENT
     if (smtp_session.attachments)
     {
-        sprintf(content_buf,
-                "FROM:<%s>\r\n"
-                "TO:<%s>\r\n"
-                "SUBJECT:%s\r\n"
-                "Content-Type: multipart/mixed;"
-                "boundary=\"smtp_client_boundary\"\r\n\r\n"
-                "--" SMTP_MAIL_BOUNDARY "\r\n"
-                "Content-Type: text/plain; charset=\"utf-8\"\r\n"
-                "Content-Transfer-Encoding: 7bit\r\n\r\n"
-                "%s\r\n\r\n",
-                smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
+        snprintf(content_buf, sizeof(g_content_buf),
+                 "FROM:<%s>\r\n"
+                 "TO:<%s>\r\n"
+                 "SUBJECT:%s\r\n"
+                 "Content-Type: multipart/mixed;boundary=\"smtp_client_boundary\"\r\n\r\n"
+                 "--" SMTP_MAIL_BOUNDARY "\r\n"
+                 "Content-Type: text/html; charset=\"utf-8\"\r\n"
+                 "Content-Transfer-Encoding: 7bit\r\n\r\n"
+                 "%s\r\n\r\n",
+                 smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
     }
     else
     {
-        sprintf(content_buf,
-                "FROM: <%s>\r\n"
-                "TO: <%s>\r\n"
-                "SUBJECT:%s\r\n\r\n"
-                "%s\r\n\r\n",
-                smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
+        snprintf(content_buf, sizeof(g_content_buf),
+                 "FROM: <%s>\r\n"
+                 "TO: <%s>\r\n"
+                 "SUBJECT:%s\r\n"
+                 "Content-Type: text/html; charset=\"utf-8\"\r\n\r\n"
+                 "%s\r\n\r\n",
+                 smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
     }
-
 #else
-    sprintf(content_buf,
-            "FROM: <%s>\r\n"
-            "TO: <%s>\r\n"
-            "SUBJECT:%s\r\n\r\n"
-            "%s\r\n\r\n",
-            smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
+    snprintf(content_buf, sizeof(g_content_buf),
+             "FROM: <%s>\r\n"
+             "TO: <%s>\r\n"
+             "SUBJECT:%s\r\n"
+             "Content-Type: text/html; charset=\"utf-8\"\r\n\r\n"
+             "%s\r\n\r\n",
+             smtp_session.address_from, smtp_session.address_to->addr, smtp_session.subject, smtp_session.body);
 #endif
-
     smtp_write((uint8_t *)content_buf, strlen(content_buf));
-
 #ifdef SMTP_CLIENT_USING_ATTACHMENT
     smtp_send_attachment();
 #endif
@@ -831,7 +842,6 @@ static int smtp_send_content(void)
         smtp_close_connection();
         return -1;
     }
-
     return 0;
 }
 
@@ -843,15 +853,15 @@ static int smtp_send_content(void)
  */
 static int smtp_quit(void)
 {
-    //这里删掉避免报错
-//     if (smtp_send_data_with_response_check(SMTP_CMD_QUIT, "221") != 0)
-//     {
-//         LOG_E("smtp quit fail");
-//         smtp_close_connection();
-//         return -1;
-//     }
+    // 这里删掉避免报错
+    //     if (smtp_send_data_with_response_check(SMTP_CMD_QUIT, "221") != 0)
+    //     {
+    //         LOG_E("smtp quit fail");
+    //         smtp_close_connection();
+    //         return -1;
+    //     }
     LOG_I("smtp mail send sussess!");
-    //关闭连接
+    // 关闭连接
     smtp_close_connection();
     LOG_I("close smtp connection!");
     return 0;
@@ -860,42 +870,42 @@ static int smtp_quit(void)
 /**
  * Name:    smtp_send
  * Brief:   真实的发送函数
- * Input:   
+ * Input:
  * Output:  发送成功0，发送失败-1
  */
 static int smtp_send(void)
 {
-    //连接服务器
+    // 连接服务器
     smtp_session.state = SMTP_NULL;
     if (smtp_connect_server() != 0)
     {
         return -1;
     }
-    //握手确认
+    // 握手确认
     smtp_session.state = SMTP_HELO;
     if (smtp_handshake() != 0)
     {
         return -1;
     }
-    //用户认证
+    // 用户认证
     smtp_session.state = SMTP_AUTH_LOGIN;
     if (smtp_auth_login() != 0)
     {
         return -1;
     }
-    //设置发件人与收件人
+    // 设置发件人与收件人
     smtp_session.state = SMTP_MAIL;
     if (smtp_set_sender_receiver() != 0)
     {
         return -1;
     }
-    //发送数据
+    // 发送数据
     smtp_session.state = SMTP_DATA;
     if (smtp_send_content() != 0)
     {
         return -1;
     }
-    //结束
+    // 结束
     smtp_session.state = SMTP_QUIT;
     if (smtp_quit() != 0)
     {
@@ -934,7 +944,7 @@ int smtp_send_mail(char *subject, char *body)
         smtp_session.body = body;
     }
 
-    //调用真实的发送函数
+    // 调用真实的发送函数
     return smtp_send();
 }
 
@@ -948,7 +958,7 @@ int smtp_send_mail(char *subject, char *body)
 int smtp_add_receiver(char *receiver_addr)
 {
     smtp_address_to_t *smtp_address_to_temp = RT_NULL;
-    //用于释放问题节点
+    // 用于释放问题节点
     smtp_address_to_t *smtp_address_to_free_temp = RT_NULL;
 
     if (receiver_addr == RT_NULL)
@@ -985,20 +995,20 @@ int smtp_add_receiver(char *receiver_addr)
         memset(smtp_address_to_temp, 0, sizeof(smtp_address_to_t));
     }
 
-    //新建一个收件人地址存储区
+    // 新建一个收件人地址存储区
     smtp_address_to_temp->addr = rt_malloc(strlen(receiver_addr) + 1);
     if (smtp_address_to_temp->addr == RT_NULL)
     {
         LOG_E("smtp receiver address string allocate fail");
         LOG_W("start to free address node");
-        //找出需要释放节点的上一个节点，并将其next指向空
+        // 找出需要释放节点的上一个节点，并将其next指向空
         smtp_address_to_free_temp = smtp_session.address_to;
         while (smtp_address_to_free_temp->next != smtp_address_to_temp)
         {
             smtp_address_to_free_temp = smtp_address_to_free_temp->next;
         }
         smtp_address_to_free_temp->next = RT_NULL;
-        //释放问题节点
+        // 释放问题节点
         rt_free(smtp_address_to_temp);
         LOG_I("address node free success!");
 
@@ -1017,7 +1027,7 @@ int smtp_add_receiver(char *receiver_addr)
  */
 void smtp_clear_receiver(void)
 {
-    //上一个节点指针
+    // 上一个节点指针
     smtp_address_to_t *cur_receiver, *next_receiver;
 
     for (cur_receiver = smtp_session.address_to; cur_receiver; cur_receiver = next_receiver)
@@ -1039,24 +1049,24 @@ void smtp_clear_receiver(void)
  */
 int smtp_delete_receiver(char *receiver_addr)
 {
-    //上一个节点指针
+    // 上一个节点指针
     smtp_address_to_t *smtp_address_to_last = RT_NULL;
-    //待删除节点指针
+    // 待删除节点指针
     smtp_address_to_t *smtp_address_to_delete = RT_NULL;
 
-    //将待删除指针指向收件人链表头结点
+    // 将待删除指针指向收件人链表头结点
     smtp_address_to_delete = smtp_session.address_to;
 
     while (smtp_address_to_delete)
     {
         if (memcmp(smtp_address_to_delete->addr, receiver_addr, strlen(receiver_addr)) == 0)
         {
-            //不存在上一个节点，则当前节点为第一个节点
+            // 不存在上一个节点，则当前节点为第一个节点
             if (smtp_address_to_last == RT_NULL)
             {
-                //若有下一个节点则第一个节点指向待删除的下一个节点，若没有则为空
+                // 若有下一个节点则第一个节点指向待删除的下一个节点，若没有则为空
                 smtp_session.address_to = smtp_address_to_delete->next;
-                //释放内存
+                // 释放内存
                 rt_free(smtp_address_to_delete->addr);
                 rt_free(smtp_address_to_delete);
 
@@ -1064,9 +1074,9 @@ int smtp_delete_receiver(char *receiver_addr)
             }
             else
             {
-                //若有下一个节点则第一个节点指向待删除的下一个节点，若没有则为空
+                // 若有下一个节点则第一个节点指向待删除的下一个节点，若没有则为空
                 smtp_address_to_last->next = smtp_address_to_delete->next;
-                //释放内存
+                // 释放内存
                 rt_free(smtp_address_to_delete->addr);
                 rt_free(smtp_address_to_delete);
 

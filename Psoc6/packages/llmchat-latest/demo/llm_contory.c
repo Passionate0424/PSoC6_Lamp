@@ -14,6 +14,7 @@ extern float T_H_Data[2];             // [0]:温度(°C) [1]:湿度(%)
 extern int tvoc;                      // 总挥发性有机物浓度（ppb）
 extern int eco2;                      // 二氧化碳浓度（ppm）
 rt_mutex_t llm_mutex = RT_NULL;
+rt_bool_t llm_enable = RT_TRUE; // 用于控制是否允许发送新的请求
 
 static llm_t llm_handle = RT_NULL;
 const char LED_PROMPT[] =
@@ -35,7 +36,7 @@ const char ENV_PROMPT[] =
     "气压：%.2f hPa\n";
 const char CHAT_PROMPT[] =
     "prompt:\n"
-    "现在你是一位语音助手，我们要进行语音对话，请你的回复内容不要出现\\n等转义字符，便于我合成语音。\n"
+    "现在你叫Deepseek，我们要进行语音对话，请你的回复内容不要出现\\n等转义字符，便于我合成语音。\n"
     "下面是我的输入:{%s}\n";
 static int led_state = PIN_LOW;
 
@@ -121,8 +122,11 @@ void llm_send_env(void)
     }
 
     rt_snprintf(prompt, sizeof(prompt), ENV_PROMPT, T_H_Data[0], T_H_Data[1], eco2, tvoc, Air_Data[1]);
-    rt_mutex_take(llm_mutex, 100);
-    send_llm_mb(llm_handle, prompt);
+    if (rt_mutex_trytake(llm_mutex) == RT_EOK && llm_enable == 1)
+    {
+        llm_enable = 0; // 禁止重复发送
+        send_llm_mb(llm_handle, prompt);
+    }
 }
 
 // 测试llm_send_env

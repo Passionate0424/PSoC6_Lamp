@@ -70,6 +70,11 @@
   "name": "BH1750"
  }, 
  {
+  "path": "/packages/peripherals/sensors/aht10", 
+  "ver": "latest", 
+  "name": "AHT10"
+ }, 
+ {
   "path": "/packages/peripherals/touch/gt911", 
   "ver": "latest", 
   "name": "GT911"
@@ -88,16 +93,6 @@
   "path": "/packages/ai/nnom", 
   "ver": "v0.4.3", 
   "name": "NNOM"
- }, 
- {
-  "path": "/packages/ai/onnx-backend", 
-  "ver": "latest", 
-  "name": "ONNX_BACKEND"
- }, 
- {
-  "path": "/packages/ai/onnx-parser", 
-  "ver": "latest", 
-  "name": "ONNX_PARSER"
  }, 
  {
   "path": "/packages/ai/llmchat", 

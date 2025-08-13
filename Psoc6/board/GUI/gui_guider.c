@@ -89,6 +89,7 @@ void init_scr_del_flag(lv_ui *ui)
     ui->home_del = true;
     ui->monitor_del = true;
     ui->settings_del = true;
+    ui->wifi_connect_del = true;
     ui->guader_del = true;
     ui->font_del = true;
 }
@@ -139,6 +140,7 @@ void setup_ui(lv_ui *ui)
     init_scr_del_flag(ui);
     init_keyboard(ui);
     setup_scr_home(ui);
+    setup_scr_wifi_connect(ui);
     lv_scr_load(ui->home);
 }
 

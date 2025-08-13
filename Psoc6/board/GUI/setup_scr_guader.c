@@ -120,77 +120,77 @@ void setup_scr_guader(lv_ui *ui)
     lv_obj_set_style_text_opa(ui->guader_btn_1, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui->guader_btn_1, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
 
-    //Write codes guader_cont_2
-    ui->guader_cont_2 = lv_obj_create(ui->guader);
-    lv_obj_set_pos(ui->guader_cont_2, 100, 182);
-    lv_obj_set_size(ui->guader_cont_2, 120, 30);
-    lv_obj_set_scrollbar_mode(ui->guader_cont_2, LV_SCROLLBAR_MODE_OFF);
-
-    //Write style for guader_cont_2, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_border_width(ui->guader_cont_2, 3, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_border_opa(ui->guader_cont_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_border_color(ui->guader_cont_2, lv_color_hex(0x7fc2fa), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_border_side(ui->guader_cont_2, LV_BORDER_SIDE_FULL, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->guader_cont_2, 14, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui->guader_cont_2, 123, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui->guader_cont_2, lv_color_hex(0x52e0fe), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui->guader_cont_2, LV_GRAD_DIR_NONE, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->guader_cont_2, 3, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_color(ui->guader_cont_2, lv_color_hex(0x7fc2fa), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_opa(ui->guader_cont_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_spread(ui->guader_cont_2, 1, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_ofs_x(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_ofs_y(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-
-    //Write codes guader_label_2
-    ui->guader_label_2 = lv_label_create(ui->guader_cont_2);
-    lv_label_set_text(ui->guader_label_2, "记录次数：");
-    lv_label_set_long_mode(ui->guader_label_2, LV_LABEL_LONG_WRAP);
-    lv_obj_set_pos(ui->guader_label_2, 4, 5);
-    lv_obj_set_size(ui->guader_label_2, 70, 17);
-
-    //Write style for guader_label_2, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_border_width(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_color(ui->guader_label_2, lv_color_hex(0x000000), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->guader_label_2, &lv_font_SourceHanSerifSC_Regular_14, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui->guader_label_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_letter_space(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_line_space(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui->guader_label_2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-
-    //Write codes guader_label_times
-    ui->guader_label_times = lv_label_create(ui->guader_cont_2);
-    lv_label_set_text(ui->guader_label_times, "--");
-    lv_label_set_long_mode(ui->guader_label_times, LV_LABEL_LONG_WRAP);
-    lv_obj_set_pos(ui->guader_label_times, 72, 5);
-    lv_obj_set_size(ui->guader_label_times, 25, 17);
-
-    //Write style for guader_label_times, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_border_width(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_color(ui->guader_label_times, lv_color_hex(0xfffe34), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->guader_label_times, &lv_font_montserratMedium_15, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui->guader_label_times, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_letter_space(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_line_space(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui->guader_label_times, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    //Write codes guader_cont_2
+//    ui->guader_cont_2 = lv_obj_create(ui->guader);
+//    lv_obj_set_pos(ui->guader_cont_2, 100, 182);
+//    lv_obj_set_size(ui->guader_cont_2, 120, 30);
+//    lv_obj_set_scrollbar_mode(ui->guader_cont_2, LV_SCROLLBAR_MODE_OFF);
+//
+//    //Write style for guader_cont_2, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+//    lv_obj_set_style_border_width(ui->guader_cont_2, 3, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_border_opa(ui->guader_cont_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_border_color(ui->guader_cont_2, lv_color_hex(0x7fc2fa), LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_border_side(ui->guader_cont_2, LV_BORDER_SIDE_FULL, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_radius(ui->guader_cont_2, 14, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_bg_opa(ui->guader_cont_2, 123, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_bg_color(ui->guader_cont_2, lv_color_hex(0x52e0fe), LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_bg_grad_dir(ui->guader_cont_2, LV_GRAD_DIR_NONE, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_top(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_bottom(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_left(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_right(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_width(ui->guader_cont_2, 3, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_color(ui->guader_cont_2, lv_color_hex(0x7fc2fa), LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_opa(ui->guader_cont_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_spread(ui->guader_cont_2, 1, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_ofs_x(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_ofs_y(ui->guader_cont_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//
+//    //Write codes guader_label_2
+//    ui->guader_label_2 = lv_label_create(ui->guader_cont_2);
+//    lv_label_set_text(ui->guader_label_2, "记录次数：");
+//    lv_label_set_long_mode(ui->guader_label_2, LV_LABEL_LONG_WRAP);
+//    lv_obj_set_pos(ui->guader_label_2, 4, 5);
+//    lv_obj_set_size(ui->guader_label_2, 70, 17);
+//
+//    //Write style for guader_label_2, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+//    lv_obj_set_style_border_width(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_radius(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_color(ui->guader_label_2, lv_color_hex(0x000000), LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_font(ui->guader_label_2, &lv_font_SourceHanSerifSC_Regular_14, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_opa(ui->guader_label_2, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_letter_space(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_line_space(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_align(ui->guader_label_2, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_bg_opa(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_top(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_right(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_bottom(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_left(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_width(ui->guader_label_2, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//
+//    //Write codes guader_label_times
+//    ui->guader_label_times = lv_label_create(ui->guader_cont_2);
+//    lv_label_set_text(ui->guader_label_times, "--");
+//    lv_label_set_long_mode(ui->guader_label_times, LV_LABEL_LONG_WRAP);
+//    lv_obj_set_pos(ui->guader_label_times, 72, 5);
+//    lv_obj_set_size(ui->guader_label_times, 25, 17);
+//
+//    //Write style for guader_label_times, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+//    lv_obj_set_style_border_width(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_radius(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_color(ui->guader_label_times, lv_color_hex(0xfffe34), LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_font(ui->guader_label_times, &lv_font_montserratMedium_15, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_opa(ui->guader_label_times, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_letter_space(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_line_space(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_text_align(ui->guader_label_times, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_bg_opa(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_top(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_right(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_bottom(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_pad_left(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+//    lv_obj_set_style_shadow_width(ui->guader_label_times, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
 
     //Write codes guader_label_4
     ui->guader_label_4 = lv_label_create(ui->guader);

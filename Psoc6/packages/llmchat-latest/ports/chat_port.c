@@ -365,6 +365,8 @@ static void recv_inputBuff_mb(void *handle)
         deal_llm_answer(llm);
 
         rt_free(input_buffer);
+        rt_thread_mdelay(10000); // 延时10s，避免过快发送
+        llm_enable = 1; // 允许再次发送
         rt_mutex_release(llm_mutex);
         rt_kprintf("llm_mutex released.\n");
     }

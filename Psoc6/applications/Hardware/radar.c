@@ -573,12 +573,12 @@ static void radar_test_thread_entry(void *parameter)
         radar_query_presence();    // 查询人体存在状态
         radar_query_respiration(); // 查询呼吸数值
         radar_query_heart_rate();  // 查询心率数值
-        rt_thread_mdelay(1200);    // 1秒查询周期
+        rt_thread_mdelay(1000);    // 1秒查询周期
 
         // --- 人体存在状态变化自动开关灯逻辑（事件集方式） ---
         static uint8_t last_filtered_status = 0;
         static uint8_t filter_count = 0;
-        const uint8_t filter_threshold = 3; // 连续3次确认
+        const uint8_t filter_threshold = 1; // 连续3次确认
         extern void led_request_on(void);
         extern void led_request_off(void);
         static uint8_t light_on = 0;
@@ -609,6 +609,7 @@ static void radar_test_thread_entry(void *parameter)
 
         // lvgl 显示数据
         rt_snprintf(radar_disp_buffer, sizeof(radar_disp_buffer), "%dppm", heart_rate_value);
+        // rt_kprintf("Heart Rate: %s\n", radar_disp_buffer);
         if (guider_ui.monitor_label_heart_now != NULL && guider_ui.monitor_heart_chart != NULL && guider_ui.monitor_heart_series != NULL)
         {
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
@@ -619,6 +620,7 @@ static void radar_test_thread_entry(void *parameter)
         }
 
         rt_snprintf(radar_disp_buffer, sizeof(radar_disp_buffer), "%drpm", respiration_value);
+        // rt_kprintf("Respiration: %s\n", radar_disp_buffer);
         if (guider_ui.monitor_label_breath_now != NULL && guider_ui.monitor_breath_chart != NULL && guider_ui.monitor_breath_series != NULL)
         {
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
@@ -693,7 +695,7 @@ int radar_test_init(void)
     rt_thread_t tid = rt_thread_create("radar",
                                        radar_test_thread_entry,
                                        RT_NULL,
-                                       5120,
+                                       1024,
                                        15,
                                        20);
     if (tid)

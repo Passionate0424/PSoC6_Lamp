@@ -82,28 +82,27 @@ static void wifi_ready_callback(int event, struct rt_wlan_buff *buff, void *para
         settings_digital_clock_1_sec_value = my_time.sec;
         rt_mutex_release(lv_mutex);
 
-        //设置日期
+        // 设置日期
         static char calendar_date[16];
         rt_snprintf(calendar_date, sizeof(calendar_date), "%04d/%02d/%02d", my_time.year, my_time.month, my_time.day);
-        if(guider_ui.home_datetext_1 != RT_NULL)
+        if (guider_ui.home_datetext_1 != RT_NULL)
         {
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
             lv_label_set_text(guider_ui.home_datetext_1, calendar_date);
             rt_mutex_release(lv_mutex);
         }
-        if(guider_ui.monitor_datetext_1 != RT_NULL)
+        if (guider_ui.monitor_datetext_1 != RT_NULL)
         {
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
             lv_label_set_text(guider_ui.monitor_datetext_1, calendar_date);
             rt_mutex_release(lv_mutex);
         }
-        if(guider_ui.settings_datetext_1 != RT_NULL)
+        if (guider_ui.settings_datetext_1 != RT_NULL)
         {
             rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
             lv_label_set_text(guider_ui.settings_datetext_1, calendar_date);
             rt_mutex_release(lv_mutex);
         }
-        
     }
     else
     {
@@ -303,10 +302,11 @@ int wifi_spi_device_init(void)
     rt_kprintf("rw007 ver: [%s]\n\n", sn_version);
 
     rt_wlan_register_event_handler(RT_WLAN_EVT_READY, wifi_ready_callback, RT_NULL);
-    rt_wlan_register_event_handler(RT_WLAN_EVT_STA_CONNECTED, wifi_connect_callback, RT_NULL);
-    rt_wlan_register_event_handler(RT_WLAN_EVT_STA_DISCONNECTED, wifi_disconnect_callback, RT_NULL);
-    rt_wlan_register_event_handler(RT_WLAN_EVT_STA_CONNECTED_FAIL, wifi_connect_fail_callback, RT_NULL);
-    rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, wifi_scan_success_callback, RT_NULL);
+    // rt_wlan_register_event_handler(RT_WLAN_EVT_STA_CONNECTED, wifi_connect_callback, RT_NULL);
+    // rt_wlan_register_event_handler(RT_WLAN_EVT_STA_DISCONNECTED, wifi_disconnect_callback, RT_NULL);
+    // rt_wlan_register_event_handler(RT_WLAN_EVT_STA_CONNECTED_FAIL, wifi_connect_fail_callback, RT_NULL);
+    // 确认驱动层的SCAN_REPORT事件注册已被注释，避免覆盖UI层注册
+    // rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, wifi_scan_success_callback, RT_NULL);
 
     // wifi启动自动连接线程
     rt_thread_t wifi_auto_connect_thread = rt_thread_create("wifi_auto_connect",

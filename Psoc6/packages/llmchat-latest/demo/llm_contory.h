@@ -10,6 +10,7 @@ extern "C"
 #endif
 
     extern rt_mutex_t llm_mutex;
+    extern rt_bool_t llm_enable;
 
     void llm_send_env(void);
     void llm_send_char(char *buffer);

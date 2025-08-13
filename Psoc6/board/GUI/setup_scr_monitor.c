@@ -17,7 +17,7 @@
 int monitor_digital_clock_1_min_value = 25;
 int monitor_digital_clock_1_hour_value = 11;
 int monitor_digital_clock_1_sec_value = 50;
-//char monitor_digital_clock_1_meridiem[] = "AM";
+// char monitor_digital_clock_1_meridiem[] = "AM";
 void setup_scr_monitor(lv_ui *ui)
 {
     // Write codes monitor
@@ -828,17 +828,21 @@ void setup_scr_monitor(lv_ui *ui)
     lv_obj_set_pos(ui->monitor_bar_energy, 66, 5);
     lv_obj_set_size(ui->monitor_bar_energy, 181, 15);
 
+    // 主背景灰色
+    lv_obj_set_style_bg_opa(ui->monitor_bar_energy, 180, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_energy, lv_color_hex(0xeeeeee), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_bar_energy, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // 指示器深蓝
+    lv_obj_set_style_bg_opa(ui->monitor_bar_energy, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_energy, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui->monitor_bar_energy, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_bar_energy, 10, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
     // Write style for monitor_bar_energy, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
     lv_obj_set_style_bg_opa(ui->monitor_bar_energy, 180, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui->monitor_bar_energy, lv_color_hex(0x2195f6), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui->monitor_bar_energy, LV_GRAD_DIR_HOR, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_color(ui->monitor_bar_energy, lv_color_hex(0x920ee3), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_main_stop(ui->monitor_bar_energy, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_stop(ui->monitor_bar_energy, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_energy, lv_color_hex(0xeeeeee), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui->monitor_bar_energy, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->monitor_bar_energy, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // Write style for monitor_bar_energy, Part: LV_PART_INDICATOR, State: LV_STATE_DEFAULT.
+    // 指示器深蓝
     lv_obj_set_style_bg_opa(ui->monitor_bar_energy, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui->monitor_bar_energy, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(ui->monitor_bar_energy, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -899,17 +903,21 @@ void setup_scr_monitor(lv_ui *ui)
     lv_obj_set_pos(ui->monitor_bar_carefulness, 66, 46);
     lv_obj_set_size(ui->monitor_bar_carefulness, 181, 15);
 
+    // 主背景灰色
+    lv_obj_set_style_bg_opa(ui->monitor_bar_carefulness, 180, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_carefulness, lv_color_hex(0xeeeeee), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_bar_carefulness, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    // 指示器深蓝
+    lv_obj_set_style_bg_opa(ui->monitor_bar_carefulness, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_carefulness, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui->monitor_bar_carefulness, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_bar_carefulness, 10, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+
     // Write style for monitor_bar_carefulness, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
     lv_obj_set_style_bg_opa(ui->monitor_bar_carefulness, 180, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui->monitor_bar_carefulness, lv_color_hex(0x2195f6), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui->monitor_bar_carefulness, LV_GRAD_DIR_HOR, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_color(ui->monitor_bar_carefulness, lv_color_hex(0x920ee3), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_main_stop(ui->monitor_bar_carefulness, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_stop(ui->monitor_bar_carefulness, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_bar_carefulness, lv_color_hex(0xeeeeee), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_radius(ui->monitor_bar_carefulness, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->monitor_bar_carefulness, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // Write style for monitor_bar_carefulness, Part: LV_PART_INDICATOR, State: LV_STATE_DEFAULT.
+    // 指示器深蓝
     lv_obj_set_style_bg_opa(ui->monitor_bar_carefulness, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_color(ui->monitor_bar_carefulness, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_grad_dir(ui->monitor_bar_carefulness, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_DEFAULT);
@@ -1762,55 +1770,54 @@ void setup_scr_monitor(lv_ui *ui)
     lv_obj_set_style_pad_left(ui->monitor_label_39, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_shadow_width(ui->monitor_label_39, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    //Write codes monitor_label_40
+    // Write codes monitor_label_40
     ui->monitor_label_40 = lv_label_create(ui->monitor_tabview_1_tab_3);
     lv_label_set_text(ui->monitor_label_40, "demo");
     lv_label_set_long_mode(ui->monitor_label_40, LV_LABEL_LONG_WRAP);
     lv_obj_set_pos(ui->monitor_label_40, 155, 71);
     lv_obj_set_size(ui->monitor_label_40, 51, 18);
 
-    //Write style for monitor_label_40, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_border_width(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_color(ui->monitor_label_40, lv_color_hex(0x000000), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->monitor_label_40, &lv_font_SourceHanSerifSC_Regular_16, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui->monitor_label_40, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_letter_space(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_line_space(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_align(ui->monitor_label_40, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_top(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_right(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_bottom(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_left(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->monitor_label_40, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+    // Write style for monitor_label_40, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+    lv_obj_set_style_border_width(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(ui->monitor_label_40, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui->monitor_label_40, &lv_font_SourceHanSerifSC_Regular_16, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui->monitor_label_40, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_letter_space(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_line_space(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui->monitor_label_40, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_top(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_right(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_bottom(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_pad_left(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_width(ui->monitor_label_40, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    //Write codes monitor_sw_demo
+    // Write codes monitor_sw_demo
     ui->monitor_sw_demo = lv_switch_create(ui->monitor_tabview_1_tab_3);
     lv_obj_set_pos(ui->monitor_sw_demo, 212, 70);
     lv_obj_set_size(ui->monitor_sw_demo, 40, 20);
 
-    //Write style for monitor_sw_demo, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0xe6e2e6), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->monitor_sw_demo, 10, LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_shadow_width(ui->monitor_sw_demo, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+    // Write style for monitor_sw_demo, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0xe6e2e6), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_sw_demo, 10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_width(ui->monitor_sw_demo, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    //Write style for monitor_sw_demo, Part: LV_PART_INDICATOR, State: LV_STATE_CHECKED.
-    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_INDICATOR|LV_STATE_CHECKED);
-    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0x2195f6), LV_PART_INDICATOR|LV_STATE_CHECKED);
-    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_INDICATOR|LV_STATE_CHECKED);
-    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_INDICATOR|LV_STATE_CHECKED);
+    // Write style for monitor_sw_demo, Part: LV_PART_INDICATOR, State: LV_STATE_CHECKED.
+    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_INDICATOR | LV_STATE_CHECKED);
+    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0x2195f6), LV_PART_INDICATOR | LV_STATE_CHECKED);
+    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_INDICATOR | LV_STATE_CHECKED);
+    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_INDICATOR | LV_STATE_CHECKED);
 
-    //Write style for monitor_sw_demo, Part: LV_PART_KNOB, State: LV_STATE_DEFAULT.
-    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_KNOB|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0xffffff), LV_PART_KNOB|LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_KNOB|LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_KNOB|LV_STATE_DEFAULT);
-    lv_obj_set_style_radius(ui->monitor_sw_demo, 10, LV_PART_KNOB|LV_STATE_DEFAULT);
-
+    // Write style for monitor_sw_demo, Part: LV_PART_KNOB, State: LV_STATE_DEFAULT.
+    lv_obj_set_style_bg_opa(ui->monitor_sw_demo, 255, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui->monitor_sw_demo, lv_color_hex(0xffffff), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_grad_dir(ui->monitor_sw_demo, LV_GRAD_DIR_NONE, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui->monitor_sw_demo, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_radius(ui->monitor_sw_demo, 10, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     // Write codes monitor_cont_2
     ui->monitor_cont_2 = lv_obj_create(ui->monitor);
@@ -1958,7 +1965,7 @@ void setup_scr_monitor(lv_ui *ui)
     lv_chart_set_type(ui->monitor_heart_chart, LV_CHART_TYPE_LINE);
     lv_chart_set_range(ui->monitor_heart_chart, LV_CHART_AXIS_PRIMARY_Y, 40, 150); // 心率范围
     lv_chart_set_point_count(ui->monitor_heart_chart, 20);                         // 20个点
-    lv_chart_set_update_mode(ui->monitor_heart_chart, LV_CHART_UPDATE_MODE_SHIFT); 
+    lv_chart_set_update_mode(ui->monitor_heart_chart, LV_CHART_UPDATE_MODE_SHIFT);
     // 设置主区域为淡红色半透明背景
     lv_obj_set_style_bg_opa(ui->monitor_heart_chart, 120, LV_PART_MAIN);
     lv_obj_set_style_bg_color(ui->monitor_heart_chart, lv_palette_lighten(LV_PALETTE_RED, 3), LV_PART_MAIN);
@@ -2208,7 +2215,7 @@ void setup_scr_monitor(lv_ui *ui)
     lv_obj_set_pos(ui->monitor_humidity_chart, 0, 0);
     // 设置为折线图
     lv_chart_set_type(ui->monitor_humidity_chart, LV_CHART_TYPE_LINE);
-    lv_chart_set_range(ui->monitor_humidity_chart, LV_CHART_AXIS_PRIMARY_Y, 20, 60); // 湿度范围
+    lv_chart_set_range(ui->monitor_humidity_chart, LV_CHART_AXIS_PRIMARY_Y, 20, 80); // 湿度范围
     lv_chart_set_point_count(ui->monitor_humidity_chart, 20);                        // 20个点
     lv_chart_set_update_mode(ui->monitor_humidity_chart, LV_CHART_UPDATE_MODE_SHIFT);
     // 设置主区域为淡蓝色半透明背景

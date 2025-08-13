@@ -27,8 +27,10 @@ void events_init(lv_ui *ui);
 void events_init_home(lv_ui *ui);
 void events_init_monitor(lv_ui *ui);
 void events_init_settings(lv_ui *ui);
+void events_init_wifi_connect(lv_ui *ui);
 void events_init_guader(lv_ui *ui);
 void drink_timer_restart(void);
+static void direction_btn_canvas_event_cb(lv_event_t *e);
 
 #ifdef __cplusplus
 }

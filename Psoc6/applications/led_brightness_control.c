@@ -101,7 +101,7 @@ static void led_brightness_thread_entry(void *parameter)
     // 新增：平滑光照值和PWM值
     static float filtered_light = 0.0f;
     static float filtered_pwm = 0.0f;
-    const float alpha_light = 0.2f; // 光照滤波系数
+    const float alpha_light = 0.1f; // 光照滤波系数
     const float alpha_pwm = 0.2f;   // PWM滤波系数
 
     /* 查找并打开PWM设备 */
@@ -331,7 +331,7 @@ int led_event_system_init(void)
     {
         led_event = rt_event_create("led_evt", RT_IPC_FLAG_FIFO);
     }
-    rt_thread_t evt_tid = rt_thread_create("led_evt", led_event_thread_entry, RT_NULL, 1024, 16, 10);
+    rt_thread_t evt_tid = rt_thread_create("led_evt", led_event_thread_entry, RT_NULL, 512, 16, 10);
     if (evt_tid)
         rt_thread_startup(evt_tid);
     return 0;

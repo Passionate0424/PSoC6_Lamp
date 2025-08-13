@@ -84,8 +84,8 @@ static rt_err_t uart_rx_ind(rt_device_t dev, rt_size_t size)
 {
     if (size > 0)
     {
-        //rt_kprintf("---------------------------int\n");
-        // uart_rx_len += size;
+        // rt_kprintf("---------------------------int\n");
+        //  uart_rx_len += size;
         rt_sem_release(rx_sem);
         // 关闭串口中断
         rt_device_control(serial, RT_DEVICE_CTRL_CLR_INT, RT_NULL);
@@ -142,8 +142,8 @@ static void uart1_thread_entry(void *parameter)
         {
             // LOG_I("len: %d\n", len);
             rx_buffer[len] = '\0'; // 确保字符串结束
-            LOG_I("Received: %s\n", rx_buffer);
-            //  协议数据处理逻辑
+            // LOG_I("Received: %s\n", rx_buffer);
+            //   协议数据处理逻辑
             char *data = rx_buffer;
             int data_len = len;
             int idx = 0;
@@ -200,7 +200,15 @@ static void uart1_thread_entry(void *parameter)
                                 if (endp && (*(endp - 1) == ':'))
                                     *(endp - 1) = '\0';
                                 LOG_I("[CMD] 控制字t, 中文字段: %s", arg1);
-                                rt_mq_send(ai_dialog_mq, arg1, strlen(arg1) + 1);
+                                if (rt_strstr(arg1, "ERROR"))
+                                {
+                                    char error_msg[256] = "出错了，请再说一次";
+                                    uart_send_speak(error_msg);
+                                }
+                                else
+                                {
+                                    rt_mq_send(ai_dialog_mq, arg1, strlen(arg1) + 1);
+                                }
                                 // TODO: LVGL显示等
                             }
                             else if (rt_strcmp(ctrl, "i") == 0 && arg2)
@@ -257,10 +265,9 @@ static void uart1_thread_entry(void *parameter)
                                 {
                                     LOG_I("guard模式,人入侵\n");
                                     // 发邮件
-                                    if (rt_mutex_trytake(mail_mutex) == RT_EOK)
+                                    if (rt_mutex_trytake(mail_mutex) == RT_EOK && send_enable == 1)
                                     {
-                                        // send_mail(); // 发送邮件
-                                        rt_sem_release(smtp_send_sem); // 释放发送信号量，触发邮件发送线程
+                                        //已废弃 接收完图片后发邮件
                                     }
                                 }
                                 else if (strcmp(arg1, "02") == 0)
@@ -285,16 +292,18 @@ static void uart1_thread_entry(void *parameter)
                             }
                             else if (rt_strcmp(ctrl, "d") == 0)
                             {
-                                //LOG_I("[CMD] 控制字d, 工作持续时间: %s", arg1);
-                                // TODO: 处理工作持续时间
+                                // LOG_I("[CMD] 控制字d, 工作持续时间: %s", arg1);
+                                //  TODO: 处理工作持续时间
                                 rt_int32_t work_duration = 0;
                                 // 将arg1转换为整数
                                 if (arg1)
                                 {
                                     work_duration = (rt_int32_t)strtol(arg1, RT_NULL, 10);
                                     monitor_data.work_duration = work_duration; // 更新工作持续时间
-                                    LOG_I("工作持续时间: %d 秒\n", work_duration);
-                                    // 更新工作持续时间显示
+                                    // LOG_I("工作持续时间: %d 秒\n", monitor_data.work_duration);
+                                    // 打印monitor_data.work_duration指针
+                                    // LOG_I("monitor_data.work_duration: %p\n", &monitor_data.work_duration);
+                                    //  更新工作持续时间显示
                                     float work_duration_min = work_duration / 60.0f; // 转换为分钟
                                     rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
                                     lv_label_set_text_fmt(guider_ui.monitor_label_work_duration, "%.1f", work_duration_min);
@@ -303,16 +312,16 @@ static void uart1_thread_entry(void *parameter)
                             }
                             else if (rt_strcmp(ctrl, "a") == 0)
                             {
-                                //LOG_I("[CMD] 控制字a, 玩手机持续时间: %s", arg1);
-                                // TODO: 处理玩手机持续时间
+                                // LOG_I("[CMD] 控制字a, 玩手机持续时间: %s", arg1);
+                                //  TODO: 处理玩手机持续时间
                                 rt_int32_t phone_duration = 0;
                                 // 将arg1转换为整数
                                 if (arg1)
                                 {
                                     phone_duration = (rt_int32_t)strtol(arg1, RT_NULL, 10);
                                     monitor_data.phone_duration = phone_duration; // 更新玩手机持续时间
-                                    LOG_I("玩手机持续时间: %d 秒\n", phone_duration);
-                                    // 转换为分钟并更新显示
+                                    // LOG_I("玩手机持续时间: %d 秒\n", phone_duration);
+                                    //  转换为分钟并更新显示
                                     float phone_duration_min = phone_duration / 60.0f; // 转换
                                     // 更新玩手机持续时间显示
                                     rt_mutex_take(lv_mutex, RT_WAITING_FOREVER);
@@ -543,6 +552,18 @@ rt_err_t uart_init(void)
         rt_device_close(serial);
         return RT_ERROR;
     }
+    /* 设置接收回调函数 */
+    if (rt_device_set_rx_indicate(serial, uart_rx_ind) != RT_EOK)
+    {
+        LOG_E("uart_init: failed to set rx indicate for device %s\n", SAMPLE_UART_NAME);
+        return RT_ERROR;
+    }
+
+    if (rt_device_open(serial, RT_DEVICE_FLAG_INT_RX) != RT_EOK)
+    {
+        LOG_E("uart_init: failed to open device %s\n", SAMPLE_UART_NAME);
+        return RT_ERROR;
+    }
     /* 创建串口处理线程 */
     rt_thread_t thread = rt_thread_create("uart1_process", uart1_thread_entry, RT_NULL, 5120, 25, 10);
     if (thread == RT_NULL)
@@ -569,18 +590,6 @@ rt_err_t uart_init(void)
     else
     {
         rt_thread_startup(ai_chat_thread); // 启动AI对话线程
-    }
-    /* 设置接收回调函数 */
-    if (rt_device_set_rx_indicate(serial, uart_rx_ind) != RT_EOK)
-    {
-        LOG_E("uart_init: failed to set rx indicate for device %s\n", SAMPLE_UART_NAME);
-        return RT_ERROR;
-    }
-
-    if (rt_device_open(serial, RT_DEVICE_FLAG_INT_RX) != RT_EOK)
-    {
-        LOG_E("uart_init: failed to open device %s\n", SAMPLE_UART_NAME);
-        return RT_ERROR;
     }
     return RT_EOK;
 }
